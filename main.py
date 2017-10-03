@@ -75,8 +75,8 @@ class kdTree:
         eps = 0.00001
         self.headNode = self.node(
             self.border(
-                min(i.x for i in items) + eps, min(i.y for i in items) + eps,
-                max(i.x for i in items) + eps, max(i.y for i in items) + eps
+                min([i.x for i in items]) + eps, min([i.y for i in items]) + eps,
+                max([i.x for i in items]) + eps, max([i.y for i in items]) + eps
             ))
         self.makeBoarding(False, self.headNode.brd, self.headNode, splitN)
 
@@ -87,11 +87,11 @@ class kdTree:
         cur = 0
         stop = 0
         if isHorisonal:
-            step = math.abs(initBorder.rightx - initBorder.leftx) / splits
+            step = math.fabs(initBorder.rightx - initBorder.leftx) / splits
             cur = min(initBorder.rightx, initBorder.leftx)
             stop = max(initBorder.rightx, initBorder.leftx)
         else:
-            step = math.abs(initBorder.righty - initBorder.lefty) / splits
+            step = math.fabs(initBorder.righty - initBorder.lefty) / splits
             cur = min(initBorder.righty, initBorder.lefty)
             stop = max(initBorder.righty, initBorder.lefty)
 
@@ -151,13 +151,13 @@ class kdTree:
                 self.makeBoarding(not isHorisontal, newBorders[0], node.left, splitN)
                 self.makeBoarding(not isHorisontal, newBorders[1], node.right, splitN)
             else:
-                node.left.type, node.right.type = self.cntType(node.left), self.cntType(node.right)
+                node.left.type, node.right.type = self.cntType(node.left.brd), self.cntType(node.right.brd)
 
     #return only type of node
     def search(self, x, y):
         node = self.headNode
         while node.type == -1:
-            if node.left.contains(x, y):
+            if node.left.brd.contains(x, y):
                 node = node.left
             else:
                 node = node.right
@@ -165,6 +165,8 @@ class kdTree:
 
 
 ceeper = ItemsCeeper("data")
+ceeper.read()
+tree = kdTree(ceeper.items, 5)
 ceeper.read()
 ceeper.draw()
 ceeper.addDot(0.111, -0.829)
