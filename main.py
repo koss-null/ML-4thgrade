@@ -8,20 +8,18 @@ class DataItem:
         self.x, self.y, self.type = x, y, int(type)
 
 
-def draw_rectangle(brd1, is_final, type):
-    if is_final:
-        if type == 0:
-            clr = (0, 1, 0)
-        else:
-            clr = (1, 0, 0)
+def draw_rectangle(brd1, type):
+    if type == 0:
+        clr = (0, 1, 0)
+    else:
+        clr = (1, 0, 0)
 
-        pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
-                  [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
-                  color=clr)
+    pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
+              [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
+              color=clr)
 
 
 class ItemsKeeper:
-
     def __init__(self, filename):
         self.filename = filename
         self.items = []
@@ -66,13 +64,9 @@ class KdTree:
         def __init__(self, leftx, lefty, rightx, righty):
             # left lower, right, upper
             self.leftx, self.lefty, self.rightx, self.righty = leftx, lefty, rightx, righty
-            self.decision = -1
 
         def contains(self, x, y):
             return self.rightx >= x >= self.leftx and self.righty >= y >= self.lefty
-
-        def set_decision(self, decision):
-            self.decision = decision
 
     class Node:
         def __init__(self, brd):
@@ -92,19 +86,17 @@ class KdTree:
         self.make_boarding(False, self.headNode.brd, self.headNode, split_n)
 
     # implements SAH heruistic
-    def do_sah(self, items, init_border, is_horisontal):
-        splits = 20
-        step = 0
-        cur = 0
-        stop = 0
+    def do_sah(self, init_border, is_horisontal):
+        splits = 40
+        step, cur, stop = 0, 0, 0
         if not is_horisontal:
             step = math.fabs(init_border.rightx - init_border.leftx) / splits
-            cur = min(init_border.rightx, init_border.leftx)
-            stop = max(init_border.rightx, init_border.leftx)
+            cur = init_border.leftx
+            stop = init_border.rightx
         else:
             step = math.fabs(init_border.righty - init_border.lefty) / splits
-            cur = min(init_border.righty, init_border.lefty)
-            stop = max(init_border.righty, init_border.lefty)
+            cur = init_border.lefty
+            stop = init_border.righty
 
         # shows (dots from left side of line) - (dots from right side)
         left_greater_then_right = []
@@ -131,15 +123,15 @@ class KdTree:
             i += 1
 
         if not is_horisontal:
-            cur = min(init_border.rightx, init_border.leftx)
-            cur += step * item_i
-            return [self.Border(init_border.leftx, init_border.lefty, init_border.rightx, cur),
-                    self.Border(init_border.leftx, cur, init_border.rightx, init_border.righty)]
-        else:
-            cur = min(init_border.righty, init_border.lefty)
+            cur = init_border.leftx
             cur += step * item_i
             return [self.Border(init_border.leftx, init_border.lefty, cur, init_border.righty),
                     self.Border(cur, init_border.lefty, init_border.rightx, init_border.righty)]
+        else:
+            cur = init_border.lefty
+            cur += step * item_i
+            return [self.Border(init_border.leftx, init_border.lefty, init_border.rightx, cur),
+                    self.Border(init_border.leftx, cur, init_border.rightx, init_border.righty)]
 
     def cnt_type(self, brd):
         first, second = 0, 0
@@ -155,7 +147,7 @@ class KdTree:
             return 1
 
     def make_boarding(self, isHorisontal, initBorder, node, splitN):
-        newBorders = self.do_sah(self.items, initBorder, isHorisontal)
+        newBorders = self.do_sah(initBorder, isHorisontal)
         node.left, node.right = self.Node(newBorders[0]), self.Node(newBorders[1])
         splitN -= 1
 
@@ -164,8 +156,8 @@ class KdTree:
             self.make_boarding(not isHorisontal, newBorders[1], node.right, splitN)
         else:
             node.left.type, node.right.type = self.cnt_type(node.left.brd), self.cnt_type(node.right.brd)
-        draw_rectangle(newBorders[0], splitN <= 0, node.left.type)
-        draw_rectangle(newBorders[1], splitN <= 0, node.right.type)
+            draw_rectangle(newBorders[0], node.left.type)
+            draw_rectangle(newBorders[1], node.right.type)
 
     # return only type of node
     def search(self, x, y):
@@ -175,6 +167,11 @@ class KdTree:
                 node = node.left
             else:
                 node = node.right
+        if node.type == 0:
+            clr = (0, 1, 0)
+        else:
+            clr = (1, 0, 0)
+        pplt.plot([x], [y], 'ro', color=clr)
         return node.type
 
 
@@ -182,7 +179,13 @@ keeper = ItemsKeeper("data")
 keeper.read()
 keeper.make_kd_tree(4)
 keeper.read()
+if False:
+    x, y = -0.9, -0.7
+    for i in range(50):
+        for j in range(50):
+            keeper.kd_tree.search(x, y)
+            x += 0.04
+        y += 0.04
+        x = -0.9
 keeper.draw()
-i = 0.0
-print keeper.kd_tree.search(0, 0)
 pplt.show()
