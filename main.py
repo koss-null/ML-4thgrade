@@ -10,7 +10,8 @@ class DataItem:
 
 def draw_rectangle(brd1):
     pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
-              [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty])
+              [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
+              color='r')
 
 
 class ItemsKeeper:
@@ -40,9 +41,14 @@ class ItemsKeeper:
             return 1
 
     def draw(self):
-        pplt.plot([self.items[i].x for i in range(len(self.items))],
-                  [self.items[i].y for i in range(len(self.items))],
-                  c=[self.items[i].type for i in range(len(self.items))])
+        for i in range(len(self.items)):
+            if self.items[i].type == 0:
+                clr = (0, 0, 0)
+            else:
+                clr = (1, 1, 1)
+            pplt.plot([self.items[i].x], [self.items[i].y],
+                      'ro',
+                      color=clr)
 
     def make_kd_tree(self, split_n):
         self.kd_tree = KdTree(self.items, split_n)
@@ -146,9 +152,6 @@ class KdTree:
         node.left, node.right = self.Node(newBorders[0]), self.Node(newBorders[1])
         splitN -= 1
 
-        # print 'borders1: ', newBorders[0].leftx, newBorders[0].lefty, newBorders[0].rightx, newBorders[0].righty
-        # print 'borders2: ', newBorders[1].leftx, newBorders[1].lefty, newBorders[1].rightx, newBorders[1].righty
-
         if splitN > 0:
             self.make_boarding(not isHorisontal, newBorders[0], node.left, splitN)
             self.make_boarding(not isHorisontal, newBorders[1], node.right, splitN)
@@ -174,8 +177,5 @@ keeper.make_kd_tree(3)
 keeper.read()
 keeper.draw()
 i = 0.0
-while i < 2.0:
-    print keeper.kd_tree.search(i, 0.229)
-    keeper.kd_tree.search(i, 0.229)
-    i += 0.001
+print keeper.kd_tree.search(0, 0)
 pplt.show()
