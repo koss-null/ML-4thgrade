@@ -8,13 +8,20 @@ class DataItem:
         self.x, self.y, self.type = x, y, int(type)
 
 
-def draw_rectangle(brd1):
-    pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
-              [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
-              color='r')
+def draw_rectangle(brd1, is_final, type):
+    if is_final:
+        if type == 0:
+            clr = (0, 1, 0)
+        else:
+            clr = (1, 0, 0)
+
+        pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
+                  [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
+                  color=clr)
 
 
 class ItemsKeeper:
+
     def __init__(self, filename):
         self.filename = filename
         self.items = []
@@ -157,8 +164,8 @@ class KdTree:
             self.make_boarding(not isHorisontal, newBorders[1], node.right, splitN)
         else:
             node.left.type, node.right.type = self.cnt_type(node.left.brd), self.cnt_type(node.right.brd)
-        draw_rectangle(newBorders[0])
-        draw_rectangle(newBorders[1])
+        draw_rectangle(newBorders[0], splitN <= 0, node.left.type)
+        draw_rectangle(newBorders[1], splitN <= 0, node.right.type)
 
     # return only type of node
     def search(self, x, y):
@@ -173,7 +180,7 @@ class KdTree:
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(3)
+keeper.make_kd_tree(4)
 keeper.read()
 keeper.draw()
 i = 0.0
