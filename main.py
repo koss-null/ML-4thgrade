@@ -223,7 +223,7 @@ def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
 # TODO: make n average dot number inside of border
 # TODO: fix it, doesnt work
 def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=4):
-    middle_x, middle_y = (brd.rightx - brd.leftx) / 2, (brd.righty - brd.lefty) / 2
+    middle_x, middle_y = brd.leftx + (brd.rightx - brd.leftx) / 2, brd.lefty + (brd.righty - brd.lefty) / 2
 
     dist_first_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y), filter(lambda item: item.type == 0, self.items))
     dist_first_type.sort()
