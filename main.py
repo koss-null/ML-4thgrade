@@ -175,14 +175,14 @@ class KdTree:
         elif node.type == 1:
             clr = (1, 0, 0)
         else:
-            clr = (1, 1, 1)
+            clr = (0.5, 0.5, 0.5)
         pplt.plot([x], [y], 'ro', color=clr)
         return node.type
 
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(5)
+keeper.make_kd_tree(10)
 keeper.read()
 if True:
     x, y = -0.9, -0.7
