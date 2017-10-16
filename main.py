@@ -172,7 +172,7 @@ class KdTree:
 # counting distance
 
 def euclid_dist(x1, y1, x2, y2):
-    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
 # counting border type
@@ -222,26 +222,19 @@ def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
 # and sums their distance
 # TODO: make n average dot number inside of border
 # TODO: fix it, doesnt work
-def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=5):
+def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=4):
     middle_x, middle_y = (brd.rightx - brd.leftx) / 2, (brd.righty - brd.lefty) / 2
 
-    dist_first_type = filter(lambda item: item.type == 0, self.items)
-    dist_first_type.sort(
-        lambda a, b:
-        int((cnt_dist_func(a.x, a.y, middle_x, middle_y) - cnt_dist_func(b.x, b.y, middle_x, middle_y)) * 1000))
+    dist_first_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y), filter(lambda item: item.type == 0, self.items))
+    dist_first_type.sort()
 
-    dist_second_type = filter(lambda item: item.type == 1, self.items)
-    dist_second_type.sort(
-        lambda a, b:
-        int((cnt_dist_func(a.x, a.y, middle_x, middle_y) - cnt_dist_func(b.x, b.y, middle_x, middle_y)) * 1000))
+    dist_second_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y), filter(lambda item: item.type == 1, self.items))
+    dist_second_type.sort()
 
-    print("first type")
-    print(sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_first_type[:n]))
-    print("second type")
-    print(sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_second_type[:n]))
+    print(dist_first_type)
+    print(dist_second_type)
 
-    diff = sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_first_type[:n]) - \
-           sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_second_type[:n])
+    diff = sum(dist_first_type[:n]) - sum(dist_second_type[:n])
 
     if diff < 0:
         return 0
@@ -253,7 +246,7 @@ def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=5):
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(6, mediana_cnt_type)
+keeper.make_kd_tree(6, border_independent_cnt_type)
 keeper.read()
 if False:
     x, y = -0.9, -0.7
