@@ -221,7 +221,6 @@ def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
 # count middle of brd and take first n nearest dots from each type
 # and sums their distance
 # TODO: make n average dot number inside of border
-# TODO: fix it, doesnt work
 def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=4):
     middle_x, middle_y = brd.leftx + (brd.rightx - brd.leftx) / 2, brd.lefty + (brd.righty - brd.lefty) / 2
 
