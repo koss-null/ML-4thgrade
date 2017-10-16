@@ -11,12 +11,13 @@ class DataItem:
 def draw_rectangle(brd1, type):
     if type == 0:
         clr = (0, 1, 0)
-    else:
+    elif type == 1:
         clr = (1, 0, 0)
 
-    pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
-              [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
-              color=clr)
+    if type != -2:
+        pplt.plot([brd1.leftx, brd1.leftx, brd1.rightx, brd1.rightx, brd1.leftx],
+                  [brd1.lefty, brd1.righty, brd1.righty, brd1.lefty, brd1.lefty],
+                  color=clr)
 
 
 class ItemsKeeper:
@@ -143,8 +144,10 @@ class KdTree:
                     second += 1
         if first > second:
             return 0
-        else:
+        elif second > first:
             return 1
+        else:
+            return -2
 
     def make_boarding(self, isHorisontal, initBorder, node, splitN):
         newBorders = self.do_sah(initBorder, isHorisontal)
@@ -169,17 +172,19 @@ class KdTree:
                 node = node.right
         if node.type == 0:
             clr = (0, 1, 0)
-        else:
+        elif node.type == 1:
             clr = (1, 0, 0)
+        else:
+            clr = (1, 1, 1)
         pplt.plot([x], [y], 'ro', color=clr)
         return node.type
 
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(4)
+keeper.make_kd_tree(5)
 keeper.read()
-if False:
+if True:
     x, y = -0.9, -0.7
     for i in range(50):
         for j in range(50):
