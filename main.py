@@ -174,6 +174,7 @@ class KdTree:
 def euclid_dist(x1, y1, x2, y2):
     return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
+
 # counting border type
 # in some of this functions we are using cnt_dist_func
 # it's necessary to set default cnt_dist_func
@@ -193,6 +194,7 @@ def naive_cnt_type(self, brd):
         return 1
     else:
         return -2
+
 
 # if naive returns -2 we are counting more carefully
 def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
