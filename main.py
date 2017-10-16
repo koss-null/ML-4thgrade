@@ -89,7 +89,7 @@ class KdTree:
 
     # implements SAH heruistic
     def do_sah(self, init_border, is_horisontal):
-        splits = 40
+        splits = 80
         step, cur, stop = 0, 0, 0
         if not is_horisontal:
             step = math.fabs(init_border.rightx - init_border.leftx) / splits
@@ -252,9 +252,21 @@ def border_independent_cnt_type(self, brd, cnt_dist_func=chebishev_dist, n=4):
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(10, border_independent_cnt_type)
+keeper.make_kd_tree(7, border_independent_cnt_type)
 keeper.read()
-if True:
+
+print keeper.kd_tree.search(-0.16187, 0.8019)  # 1
+print keeper.kd_tree.search(-0.11578, -0.39693)  # 1
+print keeper.kd_tree.search(0.54666, 0.48757)  # 1
+print keeper.kd_tree.search(0.38537, -0.56506)  # 1
+print keeper.kd_tree.search(-0.30588, -0.19225)  # 1
+print("here comes other")
+print keeper.kd_tree.search(0.86348, -0.082602)  # 2
+print keeper.kd_tree.search(0.59274, -0.7405)  # 2
+print keeper.kd_tree.search(0.63882, 0.88962)  # 2
+print keeper.kd_tree.search(-0.28859, -0.060673)  # 2
+
+if False:
     x, y = -0.9, -0.7
     for i in range(50):
         for j in range(50):
