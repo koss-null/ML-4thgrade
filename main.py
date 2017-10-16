@@ -218,11 +218,44 @@ def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
         return naive
 
 
+# count middle of brd and take first n nearest dots from each type
+# and sums their distance
+# TODO: make n average dot number inside of border
+# TODO: fix it, doesnt work
+def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=5):
+    middle_x, middle_y = (brd.rightx - brd.leftx) / 2, (brd.righty - brd.lefty) / 2
+
+    dist_first_type = filter(lambda item: item.type == 0, self.items)
+    dist_first_type.sort(
+        lambda a, b:
+        int((cnt_dist_func(a.x, a.y, middle_x, middle_y) - cnt_dist_func(b.x, b.y, middle_x, middle_y)) * 1000))
+
+    dist_second_type = filter(lambda item: item.type == 1, self.items)
+    dist_second_type.sort(
+        lambda a, b:
+        int((cnt_dist_func(a.x, a.y, middle_x, middle_y) - cnt_dist_func(b.x, b.y, middle_x, middle_y)) * 1000))
+
+    print("first type")
+    print(sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_first_type[:n]))
+    print("second type")
+    print(sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_second_type[:n]))
+
+    diff = sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_first_type[:n]) - \
+           sum(cnt_dist_func(a.x, a.y, middle_x, middle_y) for a in dist_second_type[:n])
+
+    if diff < 0:
+        return 0
+    elif diff > 0:
+        return 1
+    else:
+        return -2
+
+
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(7, mediana_cnt_type)
+keeper.make_kd_tree(6, mediana_cnt_type)
 keeper.read()
-if True:
+if False:
     x, y = -0.9, -0.7
     for i in range(50):
         for j in range(50):
