@@ -56,8 +56,8 @@ class ItemsKeeper:
                       'ro',
                       color=clr)
 
-    def make_kd_tree(self, split_n):
-        self.kd_tree = KdTree(self.items, split_n)
+    def make_kd_tree(self, split_n, type_cnt_func):
+        self.kd_tree = KdTree(self.items, split_n, type_cnt_func)
 
 
 class KdTree:
@@ -76,8 +76,9 @@ class KdTree:
             self.right = None
             self.type = -1
 
-    def __init__(self, items, split_n):
+    def __init__(self, items, split_n, type_cnt_func):
         self.items = items
+        self.type_cnt_func = type_cnt_func
         eps = 0.00001
         self.headNode = self.Node(
             self.Border(
@@ -134,21 +135,6 @@ class KdTree:
             return [self.Border(init_border.leftx, init_border.lefty, init_border.rightx, cur),
                     self.Border(init_border.leftx, cur, init_border.rightx, init_border.righty)]
 
-    def cnt_type(self, brd):
-        first, second = 0, 0
-        for item in self.items:
-            if brd.contains(item.x, item.y):
-                if item.type == 0:
-                    first += 1
-                else:
-                    second += 1
-        if first > second:
-            return 0
-        elif second > first:
-            return 1
-        else:
-            return -2
-
     def make_boarding(self, isHorisontal, initBorder, node, splitN):
         newBorders = self.do_sah(initBorder, isHorisontal)
         node.left, node.right = self.Node(newBorders[0]), self.Node(newBorders[1])
@@ -158,7 +144,8 @@ class KdTree:
             self.make_boarding(not isHorisontal, newBorders[0], node.left, splitN)
             self.make_boarding(not isHorisontal, newBorders[1], node.right, splitN)
         else:
-            node.left.type, node.right.type = self.cnt_type(node.left.brd), self.cnt_type(node.right.brd)
+            node.left.type = self.type_cnt_func(self, node.left.brd)
+            node.right.type = self.type_cnt_func(self, node.right.brd)
             draw_rectangle(newBorders[0], node.left.type)
             draw_rectangle(newBorders[1], node.right.type)
 
@@ -175,14 +162,30 @@ class KdTree:
         elif node.type == 1:
             clr = (1, 0, 0)
         else:
-            clr = (0.5, 0.5, 0.5)
+            clr = (0.8, 0.8, 0.8)
         pplt.plot([x], [y], 'ro', color=clr)
         return node.type
 
 
+def naive_cnt_type(self, brd):
+    first, second = 0, 0
+    for item in self.items:
+        if brd.contains(item.x, item.y):
+            if item.type == 0:
+                first += 1
+            else:
+                second += 1
+    if first > second:
+        return 0
+    elif second > first:
+        return 1
+    else:
+        return -2
+
+
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(10)
+keeper.make_kd_tree(7, naive_cnt_type)
 keeper.read()
 if True:
     x, y = -0.9, -0.7
