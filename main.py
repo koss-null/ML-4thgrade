@@ -175,6 +175,14 @@ def euclid_dist(x1, y1, x2, y2):
     return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
+def manhatten_dist(x1, y1, x2, y2):
+    return math.fabs(x2 - x1 + y2 - y1)
+
+
+def chebishev_dist(x1, y1, x2, y2):
+    return max([math.fabs(x2 - x1), math.fabs(y2 - y1)])
+
+
 # counting border type
 # in some of this functions we are using cnt_dist_func
 # it's necessary to set default cnt_dist_func
@@ -197,7 +205,7 @@ def naive_cnt_type(self, brd):
 
 
 # if naive returns -2 we are counting more carefully
-def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
+def mediana_cnt_type(self, brd, cnt_dist_func=chebishev_dist):
     naive = naive_cnt_type(self, brd)
     if naive == -2:
         first, second = 0, 0
@@ -221,17 +229,16 @@ def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
 # count middle of brd and take first n nearest dots from each type
 # and sums their distance
 # TODO: make n average dot number inside of border
-def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=4):
+def border_independent_cnt_type(self, brd, cnt_dist_func=chebishev_dist, n=4):
     middle_x, middle_y = brd.leftx + (brd.rightx - brd.leftx) / 2, brd.lefty + (brd.righty - brd.lefty) / 2
 
-    dist_first_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y), filter(lambda item: item.type == 0, self.items))
+    dist_first_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y),
+                          filter(lambda item: item.type == 0, self.items))
     dist_first_type.sort()
 
-    dist_second_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y), filter(lambda item: item.type == 1, self.items))
+    dist_second_type = map(lambda a: cnt_dist_func(a.x, a.y, middle_x, middle_y),
+                           filter(lambda item: item.type == 1, self.items))
     dist_second_type.sort()
-
-    print(dist_first_type)
-    print(dist_second_type)
 
     diff = sum(dist_first_type[:n]) - sum(dist_second_type[:n])
 
@@ -245,9 +252,9 @@ def border_independent_cnt_type(self, brd, cnt_dist_func=euclid_dist, n=4):
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(6, border_independent_cnt_type)
+keeper.make_kd_tree(10, border_independent_cnt_type)
 keeper.read()
-if False:
+if True:
     x, y = -0.9, -0.7
     for i in range(50):
         for j in range(50):
