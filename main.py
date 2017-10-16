@@ -167,6 +167,18 @@ class KdTree:
         return node.type
 
 
+# here comes different variable functions
+
+# counting distance
+
+def euclid_dist(x1, y1, x2, y2):
+    return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+# counting border type
+# in some of this functions we are using cnt_dist_func
+# it's necessary to set default cnt_dist_func
+# in case it is not to be provided inside k-tree
+
 def naive_cnt_type(self, brd):
     first, second = 0, 0
     for item in self.items:
@@ -182,10 +194,31 @@ def naive_cnt_type(self, brd):
     else:
         return -2
 
+# if naive returns -2 we are counting more carefully
+def mediana_cnt_type(self, brd, cnt_dist_func=euclid_dist):
+    naive = naive_cnt_type(self, brd)
+    if naive == -2:
+        first, second = 0, 0
+        middle_x, middle_y = (brd.rightx - brd.leftx) / 2, (brd.righty - brd.lefty) / 2
+        for item in self.items:
+            if brd.contains(item.x, item.y):
+                if item.type == 0:
+                    first += cnt_dist_func(middle_x, middle_y, item.x, item.y)
+                else:
+                    second += cnt_dist_func(middle_x, middle_y, item.x, item.y)
+        if first < second:
+            return 0
+        elif second < first:
+            return 1
+        else:
+            return -2
+    else:
+        return naive
+
 
 keeper = ItemsKeeper("data")
 keeper.read()
-keeper.make_kd_tree(7, naive_cnt_type)
+keeper.make_kd_tree(7, mediana_cnt_type)
 keeper.read()
 if True:
     x, y = -0.9, -0.7
