@@ -2,8 +2,8 @@ import math
 
 import matplotlib.pyplot as pplt
 
-import measures
 import kdtree
+import measures
 
 
 class DataItem:
@@ -51,29 +51,24 @@ class ItemsKeeper:
         self.kd_tree = kdtree.KdTree(self.items, split_n, type_cnt_func)
 
 
-keeper = ItemsKeeper("data")
-keeper.read()
-keeper.make_kd_tree(7, measures.border_independent_cnt_type)
-keeper.read()
+def main():
+    keeper = ItemsKeeper("data")
+    keeper.read()
+    keeper.make_kd_tree(7, measures.border_independent_cnt_type)
+    keeper.read()
 
-print keeper.kd_tree.search(-0.16187, 0.8019)  # 1
-print keeper.kd_tree.search(-0.11578, -0.39693)  # 1
-print keeper.kd_tree.search(0.54666, 0.48757)  # 1
-print keeper.kd_tree.search(0.38537, -0.56506)  # 1
-print keeper.kd_tree.search(-0.30588, -0.19225)  # 1
-print("here comes other")
-print keeper.kd_tree.search(0.86348, -0.082602)  # 2
-print keeper.kd_tree.search(0.59274, -0.7405)  # 2
-print keeper.kd_tree.search(0.63882, 0.88962)  # 2
-print keeper.kd_tree.search(-0.28859, -0.060673)  # 2
+    if False:
+        x, y = -0.9, -0.7
+        for i in range(50):
+            for j in range(50):
+                keeper.kd_tree.search(x, y)
+                x += 0.04
+            y += 0.04
+            x = -0.9
 
-if False:
-    x, y = -0.9, -0.7
-    for i in range(50):
-        for j in range(50):
-            keeper.kd_tree.search(x, y)
-            x += 0.04
-        y += 0.04
-        x = -0.9
-keeper.draw()
-pplt.show()
+    keeper.draw()
+    pplt.show()
+
+
+if __name__ == "__main__":
+    main()
