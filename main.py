@@ -7,6 +7,8 @@ import kdtree
 import measures
 import accuracy
 import spatial_transforms as st
+import kernel
+import distances
 
 
 class DataItem:
@@ -44,10 +46,10 @@ class ItemsKeeper:
         pplt.cla()
         pplt.clf()
 
-    def make_kd_tree(self, split_n, type_cnt_func, fold_borders):
+    def make_kd_tree(self, split_n, type_cnt_func, fold_borders, dist_func=distances.chebishev_dist):
         self.kd_tree = kdtree.KdTree(
             self.items[:fold_borders[0]] + self.items[fold_borders[1]:],
-            split_n, type_cnt_func)
+            split_n, type_cnt_func, dist_func)
 
     def shuffle(self):
         random.shuffle(self.items)
@@ -58,33 +60,41 @@ def main():
     keeper.read()
     keeper.shuffle()
 
-    fold_range = {}
-    for fold_step in range(5, 11, 1):
-        l_fld_brd, r_fld_brd = 0, fold_step
-        errors = []
-        while r_fld_brd < len(keeper.items):
-            keeper.make_kd_tree(7, measures.border_independent_cnt_type, (l_fld_brd, r_fld_brd))
-            for item in keeper.items:
-                # adding 1 'cause -0 is eq to 0
-                if keeper.kd_tree.search(item.x, item.y) == item.type:
-                    errors.append(item.type + 1)
-                else:
-                    errors.append(-(item.type + 1))
+    msrs = [measures.naive_cnt_type, measures.border_independent_cnt_type, measures.median_cnt_type]
+    dists = [distances.chebishev_dist, distances.euclid_dist, distances.manhattan_dist, distances.minkowski_distance]
 
-            l_fld_brd += fold_step
-            r_fld_brd += fold_step
-            keeper.new_plot()
+    if True:
+        fold_range = {}
+        for fold_step in range(7, 15, 1):
+            l_fld_brd, r_fld_brd = 0, fold_step
+            errors = []
+            for msr in msrs:
+                for dist in dists:
+                    print 'msr type = ', msr
+                    print 'dist type = ', dist
+                    while r_fld_brd < len(keeper.items):
+                        keeper.make_kd_tree(5, msr, (l_fld_brd, r_fld_brd), dist)
+                        for item in keeper.items:
+                            # adding 1 'cause -0 is eq to 0
+                            if keeper.kd_tree.search(item.x, item.y) == item.type:
+                                errors.append(item.type + 1)
+                            else:
+                                errors.append(-(item.type + 1))
 
-        acc = accuracy.f_measure(errors)
-        print 'for fold step = ', fold_step, ' f-measure is ', acc
-        fold_range[acc] = fold_step
+                        l_fld_brd += fold_step
+                        r_fld_brd += fold_step
+                        keeper.new_plot()
 
-    print 'maximum accuracy was with fold = ', fold_range[max(fold_range.keys())]
+                    acc = accuracy.f_measure(errors)
+                    print 'for fold step = ', fold_step, ' f-measure is ', acc
+                    fold_range[acc] = [fold_step, msr, dist, kernel.gaussian_kernel]
 
-    keeper.make_kd_tree(5, measures.border_independent_cnt_type, (0, 0))
+        print 'maximum accuracy was with fold = ', fold_range[max(fold_range.keys())]
+
+    keeper.make_kd_tree(7, measures.border_independent_cnt_type, (0, 0))
     keeper.draw()
 
-    if False:
+    if True:
         x, y = -0.9, -0.7
         for i in range(50):
             for j in range(50):

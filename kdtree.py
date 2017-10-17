@@ -1,5 +1,7 @@
 import math
 
+import distances
+
 import matplotlib.pyplot as pplt
 
 def draw_rectangle(brd1, type):
@@ -29,9 +31,10 @@ class KdTree:
             self.right = None
             self.type = -1
 
-    def __init__(self, items, split_n, type_cnt_func):
+    def __init__(self, items, split_n, type_cnt_func, dist_func=distances.chebishev_dist):
         self.items = items
         self.type_cnt_func = type_cnt_func
+        self.dist_func = dist_func
         eps = 0.00001
         self.headNode = self.Node(
             self.Border(
@@ -97,8 +100,8 @@ class KdTree:
             self.make_boarding(not isHorisontal, newBorders[0], node.left, splitN)
             self.make_boarding(not isHorisontal, newBorders[1], node.right, splitN)
         else:
-            node.left.type = self.type_cnt_func(self, node.left.brd)
-            node.right.type = self.type_cnt_func(self, node.right.brd)
+            node.left.type = self.type_cnt_func(self, node.left.brd, self.dist_func)
+            node.right.type = self.type_cnt_func(self, node.right.brd, self.dist_func)
             draw_rectangle(newBorders[0], node.left.type)
             draw_rectangle(newBorders[1], node.right.type)
 

@@ -6,7 +6,7 @@ import distances
 # it's necessary to set default cnt_dist_func
 # in case it is not to be provided inside k-tree
 
-def naive_cnt_type(self, brd):
+def naive_cnt_type(self, brd, cnt_dist_func=distances.chebishev_dist):
     first, second = 0, 0
     for item in self.items:
         if brd.contains(item.x, item.y):
