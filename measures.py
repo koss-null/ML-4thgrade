@@ -1,5 +1,6 @@
 import distances
 
+
 # counting border type
 # in some of this functions we are using cnt_dist_func
 # it's necessary to set default cnt_dist_func
@@ -22,7 +23,7 @@ def naive_cnt_type(self, brd):
 
 
 # if naive returns -2 we are counting more carefully
-def mediana_cnt_type(self, brd, cnt_dist_func=distances.chebishev_dist):
+def median_cnt_type(self, brd, cnt_dist_func=distances.chebishev_dist):
     naive = naive_cnt_type(self, brd)
     if naive == -2:
         first, second = 0, 0
