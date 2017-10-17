@@ -6,25 +6,28 @@ import matplotlib.pyplot as pplt
 import kdtree
 import measures
 import accuracy
+import spatial_transforms as st
 
 
 class DataItem:
-    def __init__(self, x, y, type):
-        self.x, self.y, self.type = x, y, int(type)
+    def __init__(self, x, y, type, transform):
+        recnt_coords = transform(x, y)
+        self.x, self.y, self.type = recnt_coords[0], recnt_coords[1], int(type)
 
 
 class ItemsKeeper:
-    def __init__(self, filename):
+    def __init__(self, filename, st_func):
         self.filename = filename
         self.items = []
         self.kd_tree = None
+        self.st_func = st_func
 
     def read(self):
         file = open(self.filename, "r")
         lines = file.readlines()
         for line in lines:
             nums = map(lambda arr: float(arr), line.split(","))
-            self.items.append(DataItem(nums[0], nums[1], nums[2]))
+            self.items.append(DataItem(nums[0], nums[1], nums[2], self.st_func))
         return self.items
 
     def draw(self):
@@ -51,12 +54,12 @@ class ItemsKeeper:
 
 
 def main():
-    keeper = ItemsKeeper("data")
+    keeper = ItemsKeeper("data", st.mult)
     keeper.read()
     keeper.shuffle()
 
     fold_range = {}
-    for fold_step in range(5, 10, 1):
+    for fold_step in range(5, 11, 1):
         l_fld_brd, r_fld_brd = 0, fold_step
         errors = []
         while r_fld_brd < len(keeper.items):
@@ -76,9 +79,9 @@ def main():
         print 'for fold step = ', fold_step, ' f-measure is ', acc
         fold_range[acc] = fold_step
 
-    print 'maximum accuracy was with step = ', fold_range[max(fold_range.keys())]
+    print 'maximum accuracy was with fold = ', fold_range[max(fold_range.keys())]
 
-    keeper.make_kd_tree(7, measures.border_independent_cnt_type, (0, 0))
+    keeper.make_kd_tree(5, measures.border_independent_cnt_type, (0, 0))
     keeper.draw()
 
     if False:
