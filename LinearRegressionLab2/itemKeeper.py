@@ -7,5 +7,5 @@ class ItemKeeper:
         lines = file.readlines()
         self.items = []
         for line in lines:
-            nums = list(map(lambda arr: int(arr), line.split(",")))
+            nums = list(map(lambda arr: float(arr), line.split(",")))
             self.items.append(item.Item(nums))

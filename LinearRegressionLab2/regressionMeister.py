@@ -1,5 +1,4 @@
 import time
-
 from enum import Enum
 
 
@@ -10,7 +9,7 @@ class RegrType(Enum):
 
 class RegressionMeister:
     def __init__(self, items, regressionType):
-        self.items = items
+        self.items = self.normalise(items)
         self.regrFunc = self.stubFunc
 
         if regressionType == RegrType.DESCENT:
@@ -21,11 +20,21 @@ class RegressionMeister:
     def stubFunc(self):
         print("not implemented yet")
 
+    def normalise(self, items):
+        maxX0 = max(map(lambda i: i.x[0], items))
+        maxX1 = max(map(lambda i: i.x[1], items))
+        for item in items:
+            item.x[0] /= maxX0
+            item.x[1] /= maxX1
+
+        return items
+
     def gardientDescent(self):
         self.stubFunc()
 
     def genericRegression(self):
         self.stubFunc()
+
 
     def MakeLearning(self):
         start = time.time()
