@@ -70,7 +70,7 @@ class RegressionMeister:
                 hypots.append(hypot)
 
             cf = math.fabs(self.cost_function(np.matrix(hypots), np.matrix(results)))
-            print("current CostFunc is ", cf, " delta is ", cfLast - cf, " step ", step)
+            # print("current CostFunc is ", cf, " delta is ", cfLast - cf, " step ", step)
             if math.fabs(cfLast - cf) < 1:
                 break
             cfLast = cf
@@ -89,12 +89,19 @@ class RegressionMeister:
                     hypots[j] /= params[j][i]
                     results[j] /= params[j][i]
 
-            print("Thetas changed into ", thetas)
-
+        print("Thetas changed into ", thetas)
         self.learnedThetas = thetas
+
 
     def generic_regression(self):
         self.stub_func()
+
+    def Find_cost(self, params):
+        params = [1] + params[:]
+        cost = 0.
+        for i in range(0, len(self.learnedThetas)):
+            cost += params[i] * self.learnedThetas[i]
+        return cost
 
     def Make_learning(self):
         start = time.time()
