@@ -18,14 +18,10 @@ class ItemKeeper:
     def Normalise(self, normPrice):
         self.maxX0 = max(map(lambda i: i.params[0], self.items))
         self.maxX1 = max(map(lambda i: i.params[1], self.items))
-        self.maxX2 = max(map(lambda i: i.params[2], self.items))
-        self.maxX3 = max(map(lambda i: i.params[3], self.items))
         self.maxY = max(map(lambda i: i.price, self.items)) if normPrice else 1
         for item in self.items:
             item.params[0] /= self.maxX0
             item.params[1] /= self.maxX1
-            item.params[2] /= self.maxX2
-            item.params[3] /= self.maxX3
             item.price /= self.maxY
 
 
