@@ -1,5 +1,6 @@
 import LinearRegressionLab2.itemKeeper as ik
 import LinearRegressionLab2.regressionMeister as rm
+from functools import reduce
 
 
 def main():
@@ -9,9 +10,16 @@ def main():
     regressionMeister.Make_learning()
 
     learnedCost = []
+    delta = 0
     for item in keeper.items:
         learnedCost.append([item.params[0], item.params[1], regressionMeister.Find_cost(item.params)])
-        print(item.params, item.price, " delta is ", (item.price - learnedCost[len(learnedCost) - 1][2]) * keeper.maxY)
+        delta += abs(item.price - learnedCost[len(learnedCost) - 1][2]) * keeper.maxY
+    delta /= len(keeper.items)
+
+    print("Average accuracy is ", delta)
+    items = list(map(lambda x: x.price, keeper.items))
+    avgCost = reduce(lambda x, y: x + y, items) / len(keeper.items)
+    print("Average house cost is ", avgCost, " accurancy is ", delta / avgCost * 100, "%")
 
     keeper.DrawData(learnedCost)
 

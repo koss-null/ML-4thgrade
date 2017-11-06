@@ -11,7 +11,7 @@ class RegrType(Enum):
 
 class RegressionMeister:
     defaultThetaVal = 500
-    alpha = 0.001
+    alpha = 0.01
 
     def __init__(self, items, regressionType):
         self.items = items
@@ -71,7 +71,7 @@ class RegressionMeister:
 
             cf = math.fabs(self.cost_function(np.matrix(hypots), np.matrix(results)))
             # print("current CostFunc is ", cf, " delta is ", cfLast - cf, " step ", step)
-            if math.fabs(cfLast - cf) < 1:
+            if math.fabs(cfLast - cf) < 0.1:
                 break
             cfLast = cf
 
