@@ -34,7 +34,7 @@ class RegressionMeister:
             j.append([1])
         I = np.matrix(j)
         # TODO: fixit matrix convertion
-        return np.matrix(1/(2 * len(hypot)) * ((hypot - real) * I)).item(0)
+        return np.matrix((1/len(hypot)) * ((hypot - real) * I)).item(0)
 
     @staticmethod
     def cost_function(hypot, real):
