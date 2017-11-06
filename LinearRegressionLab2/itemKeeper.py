@@ -14,9 +14,11 @@ class ItemKeeper:
     def Normalise(self):
         maxX0 = max(map(lambda i: i.params[0], self.items))
         maxX1 = max(map(lambda i: i.params[1], self.items))
+        maxY  = max(map(lambda i: i.price, self.items))
         for item in self.items:
             item.params[0] /= maxX0
             item.params[1] /= maxX1
+            item.price /= maxY
 
     def DrawData(self, additionalData):
         fig = plt.figure()

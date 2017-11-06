@@ -15,17 +15,20 @@ class RegressionMeister:
 
     def __init__(self, items, regressionType):
         self.items = items
-        self.regrFunc = self.stubFunc
+        self.regrFunc = self.stub_func
+        self.learnedThetas = []
 
         if regressionType == RegrType.DESCENT:
-            self.regrFunc = self.gardientDescent
+            self.regrFunc = self.gardient_descent
         elif regressionType == RegrType.GENETIC:
-            self.regrFunc = self.genericRegression
+            self.regrFunc = self.generic_regression
 
-    def stubFunc(self):
+    @staticmethod
+    def stub_func():
         print("not implemented yet")
 
-    def derivCostFunction(self, hypot, real):
+    @staticmethod
+    def deriv_cost_function(hypot, real):
         j = []
         for i in range(0, hypot.size):
             j.append([1])
@@ -33,14 +36,15 @@ class RegressionMeister:
         # TODO: fixit matrix convertion
         return np.matrix(1/(2 * len(hypot)) * ((hypot - real) * I)).item(0)
 
-    def costFunction(self, hypot, real):
+    @staticmethod
+    def cost_function(hypot, real):
         j = []
         for i in range(0, hypot.size):
             j.append([1])
         I = np.matrix(j)
         return (np.power((hypot - real), 2) * I)[0]
 
-    def gardientDescent(self):
+    def gardient_descent(self):
         # getting ready
         thetas = []
         params = []
@@ -65,9 +69,9 @@ class RegressionMeister:
 
                 hypots.append(hypot)
 
-            cf = math.fabs(self.costFunction(np.matrix(hypots), np.matrix(results)))
+            cf = math.fabs(self.cost_function(np.matrix(hypots), np.matrix(results)))
             print("current CostFunc is ", cf, " delta is ", cfLast - cf, " step ", step)
-            if math.fabs(cfLast - cf) < 10:
+            if math.fabs(cfLast - cf) < 1:
                 break
             cfLast = cf
 
@@ -77,7 +81,7 @@ class RegressionMeister:
                     hypots[j] *= params[j][i]
                     results[j] *= params[j][i]
 
-                delta = self.alpha * self.derivCostFunction(np.matrix(hypots), np.matrix(results))
+                delta = self.alpha * self.deriv_cost_function(np.matrix(hypots), np.matrix(results))
                 # converting into np.matrix to get the first item. TODO: FIXIT
                 thetas[i] -= np.matrix(delta).item(0)
 
@@ -87,10 +91,12 @@ class RegressionMeister:
 
             print("Thetas changed into ", thetas)
 
-    def genericRegression(self):
-        self.stubFunc()
+        self.learnedThetas = thetas
 
-    def MakeLearning(self):
+    def generic_regression(self):
+        self.stub_func()
+
+    def Make_learning(self):
         start = time.time()
         self.regrFunc()
         end = time.time()

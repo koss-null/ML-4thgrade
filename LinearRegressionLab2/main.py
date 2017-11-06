@@ -7,7 +7,7 @@ def main():
     keeper.Normalise()
     #keeper.DrawData([])
     regressionMeister = rm.RegressionMeister(keeper.items, rm.RegrType.DESCENT)
-    regressionMeister.MakeLearning()
+    regressionMeister.Make_learning()
 
     for item in keeper.items:
         print(item.params, item.price)
