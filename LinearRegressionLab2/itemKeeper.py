@@ -38,14 +38,36 @@ class ItemKeeper:
 
 
     def DrawData(self, additionalData, iter):
+        if iter % 30 == 0:
+            plt.close(self.fig)
+            self.fig = plt.figure()
+            self.fig.canvas.draw()
+            ax = self.fig.add_subplot(111, projection='3d')
+
+            ax.set_xlabel('θ1 : square')
+            ax.set_ylabel('θ2 : rooms')
+            ax.set_zlabel('Price')
+            ax.set_title('iter=' + str(iter))
+            ax.scatter(self.x, self.y, self.z, c='r', marker='o')
+
+            x, y, z = [], [], []
+            for item in additionalData:
+                x.append(item[0])
+                y.append(item[1])
+                z.append(item[2])
+            ax.scatter(x, y, z, c='b', marker='^')
+            self.fig.canvas.draw()
+            plt.pause(0.0001)
+
+    def DrawDataLast(self, additionalData):
         plt.close(self.fig)
+        plt.ioff()
         self.fig = plt.figure()
-        self.fig.canvas.draw()
         ax = self.fig.add_subplot(111, projection='3d')
 
         ax.set_xlabel('θ1 : square')
         ax.set_ylabel('θ2 : rooms')
-        ax.set_zlabel('Price, iter=' + str(iter))
+        ax.set_zlabel('Price')
         ax.scatter(self.x, self.y, self.z, c='r', marker='o')
 
         x, y, z = [], [], []
@@ -54,5 +76,4 @@ class ItemKeeper:
             y.append(item[1])
             z.append(item[2])
         ax.scatter(x, y, z, c='b', marker='^')
-        self.fig.canvas.draw()
-        plt.pause(0.0001)
+        plt.show()

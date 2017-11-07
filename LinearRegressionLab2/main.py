@@ -18,6 +18,7 @@ def main():
 
     print("AVG error is: ", delta, "%")
 
+    keeper.DrawDataLast(learnedCost)
     while(False):
         x = int(input('What to predict? (square):'))
         y = int(input('What to predict? (rooms):'))
