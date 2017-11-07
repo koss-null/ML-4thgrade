@@ -103,7 +103,7 @@ class RegressionMeister:
             self.learnedThetas = thetas
             for item in self.items:
                 learnedCost.append([item.params[0], item.params[1], self.Find_cost(item.params)])
-            self.keeper.DrawData(learnedCost, step)
+            self.keeper.DrawData(learnedCost, step, 30)
 
         print("Thetas changed into ", thetas)
         self.learnedThetas = thetas
@@ -155,6 +155,12 @@ class RegressionMeister:
             for i in range(0, int(len(thetas) / (3 + generation / 100))):
                 thetas.append(self.mutation())
             print("Generation ", generation, " alive ", len(thetas), " best thetas ", thetas[0])
+
+            learnedCost = []
+            self.learnedThetas = thetas[0]
+            for item in self.items:
+                learnedCost.append([item.params[0], item.params[1], self.Find_cost(item.params)])
+            self.keeper.DrawData(learnedCost, generation, 1)
 
         thetas = self.selection(thetas, 1)
         self.learnedThetas = thetas[0]

@@ -37,8 +37,8 @@ class ItemKeeper:
             self.z.append(itm.price)
 
 
-    def DrawData(self, additionalData, iter):
-        if iter % 30 == 0:
+    def DrawData(self, additionalData, iter, step):
+        if iter % step == 0:
             plt.close(self.fig)
             self.fig = plt.figure()
             self.fig.canvas.draw()

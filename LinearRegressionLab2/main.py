@@ -6,7 +6,7 @@ from functools import reduce
 def main():
     keeper = ik.ItemKeeper("prices.data")
     keeper.Normalise(False)
-    regressionMeister = rm.RegressionMeister(keeper.items, rm.RegrType.DESCENT, keeper)
+    regressionMeister = rm.RegressionMeister(keeper.items, rm.RegrType.GENETIC, keeper)
     regressionMeister.Make_learning()
 
     learnedCost = []
