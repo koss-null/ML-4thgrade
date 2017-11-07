@@ -1,7 +1,9 @@
+import math
+import random
 import time
 from enum import Enum
+
 import numpy as np
-import math
 
 
 class RegrType(Enum):
@@ -34,7 +36,7 @@ class RegressionMeister:
             j.append([1])
         I = np.matrix(j)
         # TODO: fixit matrix convertion
-        return np.matrix((1/len(hypot)) * ((hypot - real) * I)).item(0)
+        return np.matrix((1 / len(hypot)) * ((hypot - real) * I)).item(0)
 
     @staticmethod
     def cost_function(hypot, real):
@@ -43,6 +45,13 @@ class RegressionMeister:
             j.append([1])
         I = np.matrix(j)
         return (np.power((hypot - real), 2) * I)[0]
+
+    def select_cost_function(self, hypot, real):
+        j = []
+        for i in range(0, hypot.size):
+            j.append([1])
+        I = np.matrix(j)
+        return ((hypot - real) * I).item(0)
 
     def gardient_descent(self):
         # getting ready
@@ -92,9 +101,56 @@ class RegressionMeister:
         print("Thetas changed into ", thetas)
         self.learnedThetas = thetas
 
+    def make_hypot(self, x):
+        hypot = []
+        for item in self.items:
+            hypot.append(x[0] + x[1] * item.params[0] + x[2] * item.params[1])
+        return hypot
+
+    # selects n best thetas lists
+    def selection(self, thetas, n):
+        results = []
+        for item in self.items:
+            results.append(item.price)
+
+        thetas.sort(key=lambda x: abs(self.cost_function(np.matrix(self.make_hypot(x)), np.matrix(results))))
+        print("the best result for generation ", self.cost_function(np.matrix(self.make_hypot(thetas[0])), np.matrix(results)))
+        return thetas[0:n]
+
+    # gets two theta lists and concatinates them
+    def crossover(self, thetas):
+        theta = []
+        for i in range(0, len(thetas[0])):
+            theta.append((thetas[0][i] + thetas[1][i])/2)
+        return theta
+
+    # helps to get new thetas
+    def mutation(self):
+        # WOW! If this shit gonna work, IDK what'll I do
+        return [float(random.randint(60000, 110000)), float(random.randint(400000, 800000)), float(random.randint(-70000, 0))]
 
     def generic_regression(self):
-        self.stub_func()
+        lastGeneration = 200
+
+        mutationNumber = 100000
+        thetas = []
+        # generating mutants
+        for i in range(0, mutationNumber):
+            thetas.append(self.mutation())
+
+        for generation in range(0, lastGeneration):
+            print("Generation ", generation)
+            thetas = self.selection(thetas, max(int(len(thetas) / (2 + generation / 500)), 1))
+
+            for i in range(0, int(len(thetas) / 4)):
+                thetas.append(self.crossover([thetas[i], thetas[i+1]]))
+
+            for i in range(0, int(len(thetas) / (3 + generation / 100))):
+                thetas.append(self.mutation())
+            print("Generation ", generation, " alive ", len(thetas), " best thetas ", thetas[0])
+
+        thetas = self.selection(thetas, 1)
+        self.learnedThetas = thetas[0]
 
     def Find_cost(self, params):
         params = [1] + params[:]
