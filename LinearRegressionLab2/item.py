@@ -1,3 +1,5 @@
+import math
+
 class Item:
     def __init__(self, area, rooms, price):
         self.params = [area, rooms]

@@ -15,10 +15,11 @@ class RegressionMeister:
     defaultThetaVal = 500
     alpha = 0.01
 
-    def __init__(self, items, regressionType):
+    def __init__(self, items, regressionType, keeper):
         self.items = items
         self.regrFunc = self.stub_func
         self.learnedThetas = []
+        self.keeper = keeper
 
         if regressionType == RegrType.DESCENT:
             self.regrFunc = self.gardient_descent
@@ -98,6 +99,12 @@ class RegressionMeister:
                     hypots[j] /= params[j][i]
                     results[j] /= params[j][i]
 
+            learnedCost = []
+            self.learnedThetas = thetas
+            for item in self.items:
+                learnedCost.append([item.params[0], item.params[1], self.Find_cost(item.params)])
+            self.keeper.DrawData(learnedCost, step)
+
         print("Thetas changed into ", thetas)
         self.learnedThetas = thetas
 
@@ -130,7 +137,7 @@ class RegressionMeister:
         return [float(random.randint(30000, 310000)), float(random.randint(0, 1000000)), float(random.randint(-200000, 0))]
 
     def generic_regression(self):
-        lastGeneration = 400
+        lastGeneration = 100
 
         mutationNumber = 100
         thetas = []
