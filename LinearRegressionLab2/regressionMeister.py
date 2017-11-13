@@ -13,7 +13,7 @@ class RegrType(Enum):
 
 class RegressionMeister:
     defaultThetaVal = 500
-    alpha = 0.01
+    alpha = 0.025
 
     def __init__(self, items, regressionType, keeper):
         self.items = items
@@ -22,7 +22,7 @@ class RegressionMeister:
         self.keeper = keeper
 
         if regressionType == RegrType.DESCENT:
-            self.regrFunc = self.gardient_descent
+            self.regrFunc = self.gradient_descent
         elif regressionType == RegrType.GENETIC:
             self.regrFunc = self.generic_regression
 
@@ -54,7 +54,7 @@ class RegressionMeister:
         I = np.matrix(j)
         return ((hypot - real) * I).item(0)
 
-    def gardient_descent(self):
+    def gradient_descent(self):
         # getting ready
         thetas = []
         params = []
@@ -81,7 +81,9 @@ class RegressionMeister:
 
             cf = math.fabs(self.cost_function(np.matrix(hypots), np.matrix(results)))
             # print("current CostFunc is ", cf, " delta is ", cfLast - cf, " step ", step)
-            if math.fabs(cfLast - cf) < 0.1:
+            cfDifferences = (100, 1000000, 10000000000)
+            if math.fabs(cfLast - cf) < cfDifferences[1]:
+                print("steps done ", step)
                 break
             cfLast = cf
 
@@ -134,12 +136,12 @@ class RegressionMeister:
     # helps to get new thetas
     def mutation(self):
         # WOW! If this shit gonna work, IDK what'll I do
-        return [float(random.randint(30000, 310000)), float(random.randint(0, 1000000)), float(random.randint(-200000, 0))]
+        return [float(random.randint(-1000000, 1000000)), float(random.randint(-1000000, 1000000)), float(random.randint(-1000000, 1000000))]
 
     def generic_regression(self):
-        lastGeneration = 100
+        lastGeneration = 180
 
-        mutationNumber = 100
+        mutationNumber = 1000
         thetas = []
         # generating mutants
         for i in range(0, mutationNumber):
@@ -147,12 +149,12 @@ class RegressionMeister:
 
         for generation in range(0, lastGeneration):
             print("Generation ", generation)
-            thetas = self.selection(thetas, max(int(len(thetas) / (1.3 + generation / 100)), 1))
+            thetas = self.selection(thetas, max(int(len(thetas) / 2), 1))
 
-            for i in range(0, int(len(thetas) / 4)):
+            for i in range(0, int(len(thetas) / 2)):
                 thetas.append(self.crossover([thetas[i], thetas[i+1]]))
 
-            for i in range(0, int(len(thetas) / (3 + generation / 100))):
+            for i in range(0, int(len(thetas) / 3)):
                 thetas.append(self.mutation())
             print("Generation ", generation, " alive ", len(thetas), " best thetas ", thetas[0])
 
@@ -160,7 +162,7 @@ class RegressionMeister:
             self.learnedThetas = thetas[0]
             for item in self.items:
                 learnedCost.append([item.params[0], item.params[1], self.Find_cost(item.params)])
-            self.keeper.DrawData(learnedCost, generation, 1)
+            self.keeper.DrawData(learnedCost, generation, 10)
 
         thetas = self.selection(thetas, 1)
         self.learnedThetas = thetas[0]
