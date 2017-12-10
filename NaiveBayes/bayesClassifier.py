@@ -1,16 +1,22 @@
 import os
 import NaiveBayes.word as www
 
-class BayesClassifier:
-    def __init__(self):
-        self.good_words = self.read_words("data", "legit")
-        self.bad_words = self.read_words("data", "spmsg")
 
-    def read_words(self, path, prefix):
+class BayesClassifier:
+    def __init__(self, training_borders):
+        self.good_words = self.read_words("data", "legit", training_borders)
+        self.bad_words = self.read_words("data", "spmsg", training_borders)
+
+    def read_words(self, path, prefix, training_borders):
         words = []
         files = os.listdir(path)
         words_amount = 0
+        cur_file_num = 0
         for file in files:
+            if training_borders[0] <= cur_file_num <= training_borders[1]:
+                continue
+            cur_file_num += 1
+
             if prefix in file:
                 file = open(path + "/" + file, "r")
                 for line in file.readlines():
@@ -54,7 +60,7 @@ class BayesClassifier:
     def count_file_class(self, path):
         bad_prob = 0
         word_amount = 0
-        file = open("test/"+path, "r")
+        file = open("data/"+path, "r")
         for line in file.readlines():
             for word in line.split(" "):
                 try:
@@ -66,7 +72,7 @@ class BayesClassifier:
                     continue
 
         print("for " + path + " bad prob is " + str(bad_prob / word_amount))
-        if bad_prob / word_amount > 0.5:
+        if bad_prob / word_amount > 0.6:
             return 0
 
         return 1
