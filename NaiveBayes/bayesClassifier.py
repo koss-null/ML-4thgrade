@@ -29,14 +29,18 @@ class BayesClassifier:
 
                 file = open(path + "/" + file, "r")
                 for line in file.readlines():
+                    coeff = 1
+                    if "Subject" in line:
+                        coeff = 20
                     for word in line.split(" "):
                         words_amount += 1
                         try:
                             word_num = int(word)
                             if word_num in words:
-                                words[words.index(word_num)].increase_amount()
+                                words[words.index(word_num)].increase_amount(coeff)
                             else:
                                 words.append(www.Word(word_num))
+                                words[words.index(word_num)].increase_amount(coeff)
                         except Exception:
                             continue
                 file.close()
@@ -68,7 +72,7 @@ class BayesClassifier:
 
     # returns good probability vs bad probability attitude
     def count_file_class(self, path):
-        good_prob, bad_prob = 1, 1
+        good_prob, bad_prob = 0, 0
         word_amount = 0
         file = open("data/"+path, "r")
         for line in file.readlines():

@@ -4,8 +4,8 @@ class Word:
         self.frequency = 1.
         self.amount = 1.
 
-    def increase_amount(self):
-        self.amount += 1
+    def increase_amount(self, coeff):
+        self.amount += 1 * coeff
 
     def count_frequency(self, amount):
         self.frequency = self.amount / amount

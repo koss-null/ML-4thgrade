@@ -6,18 +6,17 @@ import shutil
 
 def main():
     files = os.listdir("data")
-    tp, fp, fn, tn = np.zeros(20), np.zeros(20), np.zeros(20), np.zeros(20)
-    start, end, step = 0, 10, 10
+    tp, fp, fn, tn = np.zeros(140), np.zeros(140), np.zeros(140), np.zeros(140)
+    start, end, step = 0, 20, 20
     while end < 101:
+        print(end)
         test_files = files[start:end]
 
         classifier = bc.BayesClassifier((start, end))
         for file in test_files:
             class_attitudes = classifier.count_file_class(file)
-            for h in range(4, 8):
-                cls = 1 if class_attitudes >= float(h) / 10 else 2
-                # is_spam = " spam " if cls == 2 else " not spam "
-                # print(file + " is " + is_spam)
+            for h in range(80, 120):
+                cls = 1 if (class_attitudes >= (float(h) / 100)) else 2
                 if "legit" in file and cls == 1:
                     tp[h] += 1
                 elif "legit" in file and cls == 2:
@@ -34,9 +33,20 @@ def main():
         start += step
         end += step
 
-    for h in range(4, 8):
+    for h in range(80, 120):
+        print(tp[h])
+        print(tn[h])
+        print(fp[h])
+        print(fn[h])
+
+    for h in range(80, 120):
         p = tp[h] / (tp[h] + fp[h])
         r = tp[h] / (tp[h] + fn[h])
+        print("h is " + str(float(h) / 100))
+        print("precision:" + str(p) + " recall: " + str(r))
+        print("      positive|negative")
+        print("true:     " + str(tp[h]) + " |   " + str(tn[h]))
+        print("false:    " + str(fp[h]) + " |   " + str(fn[h]))
         print("Final f-measure is " + str(2 * p * r / (r + p)))
 
 if __name__ == "__main__":
